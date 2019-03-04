@@ -1,6 +1,6 @@
 requests
 certifi
-redis
+redis>=3
 tornado 
 bitstring
 aiofcm

@@ -28,8 +28,11 @@ import tornado.websocket
 # racct   = redis.StrictRedis(host='localhost', port=6379, db=1)
 
 # Used for FCM v2 tokens
-rfcm = redis.StrictRedis(host='localhost', port=6379, db=1)
-rdata = redis.StrictRedis(host='localhost', port=6379, db=2)  # used for price data and subscriber uuid info
+rfcm = redis.Redis.from_url(os.getenv('REDIS_FCM_DB_URL', 'redis://localhost/1'))
+# rfcm = redis.StrictRedis(host='localhost', port=6379, db=1)
+# used for price data and subscriber uuid info
+rdata = redis.Redis.from_url(os.getenv('REDIS_DATA_DB_URL', 'redis://localhost/2'))
+# rdata = redis.StrictRedis(host='localhost', port=6379, db=2)  # used for price data and subscriber uuid info
 
 # get environment
 rpc_url = os.getenv('NANO_RPC_URL', 'http://127.0.0.1:7076')  # use env, else default to localhost rpc port
