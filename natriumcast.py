@@ -2,26 +2,24 @@
 
 import json
 import logging
+from logging.handlers import WatchedFileHandler, TimedRotatingFileHandler
 import os
 import ssl
 import sys
 import time
 import uuid
-from os.path import split
-from logging.handlers import WatchedFileHandler, TimedRotatingFileHandler
+
 
 import aiofcm
+from bitstring import BitArray
 import redis
-import requests
 import tornado.gen
 import tornado.httpclient
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 import tornado.websocket
-from bitstring import BitArray
 
-import natriumcast
 
 # future use for caching blocks
 # rblock  = redis.StrictRedis(host='localhost', port=6379, db=0)
@@ -138,7 +136,7 @@ def set_or_upgrade_token_account_list(account, token, v2=False):
     redisInst = rfcm if v2 else rdata
     curTokenList = redisInst.get(token)
     if curTokenList is None:
-        redisInst.set(token, json.dumps([account]), ex=2592000) 
+        redisInst.set(token, json.dumps([account]), ex=2592000)
     else:
         try:
             curToken = json.loads(curTokenList.decode('utf-8'))
@@ -270,9 +268,9 @@ def pubkey(address):
     for i in range(0,32): #make a lookup table
         account_lookup[account_map[i]] = BitArray(uint=i,length=5)
     acrop_key = address[-60:-8] #leave out prefix and checksum
-    number_l = BitArray()                                    
-    for x in range(0, len(acrop_key)):    
-        number_l.append(account_lookup[acrop_key[x]])        
+    number_l = BitArray()
+    for x in range(0, len(acrop_key)):
+        number_l.append(account_lookup[acrop_key[x]])
     number_l = number_l[4:] # reduce from 260 to 256 bit
     result = number_l.hex.upper()
     return result
@@ -380,7 +378,7 @@ def work_request(http_client, body):
             dpow_request['key'] = dpow_key
         # TODO we should probably handle timeouts for standard RPC calls in similar fashion
         try:
-            response = yield http_client.fetch(dpow_url, method='POST', body=json.dumps(dpow_request))      
+            response = yield http_client.fetch(dpow_url, method='POST', body=json.dumps(dpow_request))
             if not response.error:
                 try:
                     response_body = json.loads(response.body)
@@ -635,7 +633,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
                                 if natriumcast_request['notification_enabled']:
                                     update_fcm_token_for_account(account, natriumcast_request['fcm_token_v2'], v2=True)
                                 else:
-                                    delete_fcm_token_for_account(account, natriumcast_request['fcm_token_v2']) 
+                                    delete_fcm_token_for_account(account, natriumcast_request['fcm_token_v2'])
                         except Exception as e:
                             logging.error('reconnect error;' + str(e) + ';' + self.request.remote_ip + ';' + self.id)
                             reply = {'error': 'reconnect error', 'detail': str(e)}
@@ -923,9 +921,9 @@ if __name__ == "__main__":
     https_server.listen(socket_port)
 
     nodecallback.listen(callback_port)  # set in config.json as follows:
-    # 	"callback_address": "127.0.0.1",
-    # 	"callback_port": "17076",
-    # 	"callback_target": "/"
+    #   "callback_address": "127.0.0.1",
+    #   "callback_port": "17076",
+    #   "callback_target": "/"
 
     # push latest price data to all subscribers every minute
     tornado.ioloop.PeriodicCallback(send_prices, 60000).start()
