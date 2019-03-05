@@ -1,9 +1,11 @@
-# natrium-wallet-server (NANO)
+# natrium-wallet-server (NANO) Docker image
 
 **Requires Python 3.6**
 
-This contains a Docker image for the **natrium-wallet-server** and it
-comes with the following differences:
+This contains a Docker image for the **natrium-wallet-server**. The
+image name is
+[azazel/natrium-wallet-server](https://hub.docker.com/r/azazel/natrium-wallet-server)
+and it comes with the following differences:
 
 * the base image is a Debian Stretch;
 * Redis is supposed to run externally in another image and two
