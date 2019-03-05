@@ -2,6 +2,26 @@
 
 **Requires Python 3.6**
 
+This contains a Docker image for the **natrium-wallet-server** and it
+comes with the following differences:
+
+* the base image is a Debian Stretch;
+* Redis is supposed to run externally in another image and two
+  environment variables have been added to transfer connection
+  informations to the server process;
+* no installation/setup of the letsencrypt certificates has ben done
+  either, it should be done externally and maybe a volume containing
+  the certificates should be shared with this image;
+* the *crontab* entry has been configured and a base crond is ready to
+  run, just run another containing with the same environment variables
+  and the following commandline:
+
+  ```
+  docker run --rm --entrypoint ./cron.sh --user root ...
+  ```
+
+What follows are the contents of the original readme.
+
 Install requirements on Ubuntu 18.04:
 ```
 apt install python3 python3-dev libdpkg-perl virtualenv
@@ -182,7 +202,7 @@ frontend rpc-frontend
         bind <this host IP or 127.0.0.1 if same host>:<port>         # different than the default RPC port on a single node
         mode http
         default_backend rpc-backend
-        
+
 backend rpc-backend
         balance first
         mode http
